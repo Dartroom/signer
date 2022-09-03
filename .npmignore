@@ -1,0 +1,7 @@
+.gitignore
+.config.js
+.npmrc
+/node_modules
+/tests
+/src
+/algoSigner
