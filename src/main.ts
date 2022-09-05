@@ -3,7 +3,9 @@ import { PeraWalletConnect } from "@perawallet/connect"
 
 import { Wrapper } from "./types/algoSigner"
 
-import connect, { ConnectSettigns } from './connect'
+import connect, { ConnectSettings } from './connect'
+import disconnect, { DisconnectSettings } from './disconnect'
+import signTransaction, { Txn } from './signTransactions'
 
 export enum Ledgers {
   MAINNET = 'MainNet',
@@ -21,8 +23,6 @@ export type Addresses = Array<{
   wallet: Wallets
 }>
 
-declare const AlgoSigner: Wrapper
-
 export interface Provider {
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect
@@ -30,6 +30,8 @@ export interface Provider {
   ledger: Ledgers
   addresses: Addresses
 }
+
+declare var AlgoSigner: any;
 
 export class Wallet {
 
@@ -47,9 +49,17 @@ export class Wallet {
     this.addresses = this.getLocalAccounts()
   }
 
-  async connectNewAddress (settings: ConnectSettigns) {
+  async connectNewAddress (settings: ConnectSettings) {
     const addresses = await connect(this, settings)
     return addresses
+  }
+
+  async disconnectAddress (settings: DisconnectSettings) {
+    await disconnect(this, settings)
+  }
+
+  async signTransactions (txns: Array<Array<Txn>>) {
+    return await signTransaction(this, txns)
   }
 
   private setLocalAccounts () {

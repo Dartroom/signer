@@ -3,7 +3,7 @@ export class Wrapper {
   private task: Task = new Task();
   private router: Router = new Router();
 
-  public encoding: object = {
+  public encoding = {
     msgpackToBase64: byteArrayToBase64,
     base64ToMsgpack: base64ToByteArray,
     stringToByteArray,

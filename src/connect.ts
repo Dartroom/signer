@@ -4,7 +4,7 @@ import connectMyAlgo from './myAlgo/connect'
 import connectAlgoSigner from './algoSigner/connect'
 import connectPera from './pera/connect'
 
-export interface ConnectSettigns {
+export interface ConnectSettings {
   wallet: Wallets
 }
 
@@ -12,7 +12,7 @@ function clearWallet(p: Provider, w: Wallets) {
   p.addresses = p.addresses.filter(a => a.wallet !== w)
 }
 
-export default async function connect (provider: Provider, { wallet }: ConnectSettigns) {
+export default async function connect (provider: Provider, { wallet }: ConnectSettings) {
 
   let newAddresses: Addresses
 
