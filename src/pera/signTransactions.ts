@@ -13,9 +13,9 @@ export default async function sign ({ pera }: Provider, txns: Array<Array<Txn>>)
 
   let signedTxns: Array<Uint8Array> = []
 
-  pera.reconnectSession().then(async () => {
-    signedTxns = await pera.signTransaction(txns)
-  })
+  // pera.reconnectSession().then(async () => {
+  //   signedTxns = await pera.signTransaction(txns)
+  // })
 
   if (signedTxns.length > 0) {
     return signedTxns.map((txn, i) => {

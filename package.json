@@ -1,15 +1,15 @@
 {
   "name": "@dartroom/dart-signer",
-  "version": "0.1.0-alpha",
+  "version": "0.1.8-alpha",
   "description": "A package that aggregates all Algorand signing options into one interface. Handles signing and address/login management.",
-  "exports": "./index.js",
-  "types": "./index.d.ts",
-  "type": "module",
-  "directories": {
-    "test": "tests"
-  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "git://github.com/Dartroom/dart-signer.git",
@@ -30,7 +30,6 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@perawallet/connect": "^0.2.2",
     "@randlabs/myalgo-connect": "^1.4.0"
   }
 }

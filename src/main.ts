@@ -1,5 +1,5 @@
 import MyAlgoConnect from '@randlabs/myalgo-connect'
-import { PeraWalletConnect } from "@perawallet/connect"
+// import { PeraWalletConnect } from "@perawallet/connect"
 
 import { Wrapper } from "./types/algoSigner"
 
@@ -29,7 +29,7 @@ export type Addresses = Array<Address>
 
 export interface Provider {
   myAlgo: MyAlgoConnect
-  pera: PeraWalletConnect
+  pera: {}
   algoSigner: Wrapper | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -43,7 +43,7 @@ declare var exodus: any;
 export class Wallet {
 
   myAlgo: MyAlgoConnect
-  pera: PeraWalletConnect
+  pera: {}
   algoSigner: Wrapper | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -52,7 +52,7 @@ export class Wallet {
 
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
-    this.pera = new PeraWalletConnect({ shouldShowSignTxnToast: false })
+    this.pera = {}
     this.algoSigner = this.setAlgoSigner()
     this.exodus = this.setExodus()
     this.ledger = options?.ledger || Ledgers.MAINNET
