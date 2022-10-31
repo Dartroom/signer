@@ -3,6 +3,7 @@ import { Provider, Wallets, Addresses, Wallet } from './main'
 import connectMyAlgo from './myAlgo/connect'
 import connectAlgoSigner from './algoSigner/connect'
 import connectPera from './pera/connect'
+import connectExodus from './exodus/connect'
 
 export interface ConnectSettings {
   wallet: Wallets
@@ -29,10 +30,24 @@ export default async function connect (provider: Provider, { wallet }: ConnectSe
       newAddresses = await connectAlgoSigner(provider)
       clearWallet(provider, Wallets.ALGOSIGNER)
       break
+    case Wallets.EXODUS:
+      newAddresses = await connectExodus(provider)
+      clearWallet(provider, Wallets.EXODUS)
+      break
   }
 
   provider.addresses.push(...newAddresses)
-  localStorage.setItem('accounts', JSON.stringify(provider.addresses))
+  localStorage.setItem('@dartsigner-accounts', JSON.stringify(provider.addresses))
+
+  if (provider.active && (provider.active.wallet === wallet)) {
+
+    const foundAddress = newAddresses.find((a) => a.address === provider.active?.address)
+
+    if (!foundAddress) {
+      provider.active = undefined
+      localStorage.removeItem('@dartsigner-active')
+    }
+  }
 
   return newAddresses
 }

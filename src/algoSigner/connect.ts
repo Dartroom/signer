@@ -15,7 +15,7 @@ export default async function connect ({ algoSigner, ledger }: Provider) {
   let accounts
   
   try {
-    accounts = await algoSigner.accounts({ ledger }) as unknown as Array<{ address: string }>
+    accounts = await algoSigner.accounts({ ledger: ledger }) as unknown as Array<{ address: string }>
   } catch (err) {
     throw new Error('There were no addresses found in your AlgoSigner account. Please add an address and try again.')
   }
