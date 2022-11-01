@@ -1,6 +1,6 @@
 {
   "name": "@dartroom/dart-signer",
-  "version": "0.1.8-alpha",
+  "version": "0.1.9-alpha",
   "description": "A package that aggregates all Algorand signing options into one interface. Handles signing and address/login management.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

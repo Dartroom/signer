@@ -8,7 +8,6 @@ export interface DisconnectSettings {
 }
 
 function clearWallet(p: Provider, w: Wallets, address?: string) {
-  console.log(address)
   if (address) {
     p.addresses = p.addresses.filter(a => (a.wallet !== w) || (a.address !== address))
   } else {
