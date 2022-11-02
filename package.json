@@ -1,6 +1,6 @@
 {
   "name": "@dartroom/dart-signer",
-  "version": "0.1.9-alpha",
+  "version": "0.1.16-alpha",
   "description": "A package that aggregates all Algorand signing options into one interface. Handles signing and address/login management.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -30,6 +30,8 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@randlabs/myalgo-connect": "^1.4.0"
+    "@randlabs/myalgo-connect": "^1.4.0",
+    "@walletconnect/client": "^1.8.0",
+    "buffer": "^6.0.3"
   }
 }

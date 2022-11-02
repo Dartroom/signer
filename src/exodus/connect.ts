@@ -1,6 +1,6 @@
 import { Provider, Wallets } from '../main'
 
-export default async function connect ({ exodus, ledger }: Provider) {
+export default async function connect ({ exodus }: Provider) {
 
   if (!exodus) {
     throw new Error('Failed to connect with the Exodus. Make sure the browser extension is installed.')
@@ -9,7 +9,11 @@ export default async function connect ({ exodus, ledger }: Provider) {
   try {
     await exodus.connect()
   } catch (err) {
-    throw new Error('Failed to connect with the Exodus. Make sure the browser extension is installed.')
+    try {
+      await exodus.connect()
+    } catch (err) {
+      throw new Error('Failed to connect with the Exodus. Make sure the browser extension is installed.')
+    }
   }
 
   let accounts

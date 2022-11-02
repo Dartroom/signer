@@ -1,4 +1,6 @@
 import MyAlgoConnect from '@randlabs/myalgo-connect'
+import WalletConnect from "@walletconnect/client"
+import buffer from 'buffer'
 // import { PeraWalletConnect } from "@perawallet/connect"
 
 import { Wrapper } from "./types/algoSigner"
@@ -27,9 +29,15 @@ export interface Address {
 
 export type Addresses = Array<Address>
 
+export interface Pera {
+  connector: WalletConnect
+  uri?: string
+  deeplink?: string
+}
+
 export interface Provider {
   myAlgo: MyAlgoConnect
-  pera: {}
+  pera: Pera
   algoSigner: Wrapper | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -43,7 +51,7 @@ declare var exodus: any;
 export class Wallet {
 
   myAlgo: MyAlgoConnect
-  pera: {}
+  pera: Pera
   algoSigner: Wrapper | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -52,7 +60,7 @@ export class Wallet {
 
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
-    this.pera = {}
+    this.pera = this.setPera()
     this.algoSigner = this.setAlgoSigner()
     this.exodus = this.setExodus()
     this.ledger = options?.ledger || Ledgers.MAINNET
@@ -121,6 +129,40 @@ export class Wallet {
       return exodusSigner
     } catch {
       return undefined
+    }
+  }
+
+  private setPera () {
+    if (typeof window.global !== "undefined") {
+      // Pollyfill for Buffer
+      // @ts-ignore
+      window.global = window
+
+      const { Buffer } = buffer
+
+      // @ts-ignore
+      if (!window.Buffer) window.Buffer = Buffer
+    } else {
+      const { Buffer } = buffer
+
+      // @ts-ignore
+      if (!window.Buffer) window.Buffer = Buffer
+    }
+
+    const connector = new WalletConnect({
+      bridge: "https://bridge.walletconnect.org"
+    })
+
+    if (connector.connected) {
+      return {
+        connector: connector,
+        uri: connector.uri,
+        deeplink: `algorand://` + connector.uri.split(':')[1]
+      }
+    } else {
+      return {
+        connector: connector
+      }
     }
   }
 }
