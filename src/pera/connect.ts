@@ -1,10 +1,10 @@
 import { Provider, Wallets, Pera } from '../main'
 
 async function awaitConnect (pera: Pera): Promise<Array<string>> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     pera.connector.on("connect", (error, payload) => {
       if (error) {
-        reject(error)
+        throw new Error('Failed to connect with the Pera Wallet')
       } else {
   
         // Get provided accounts
@@ -12,6 +12,13 @@ async function awaitConnect (pera: Pera): Promise<Array<string>> {
         const account = address.accounts[0] as string
         resolve([account] as Array<string>)
       }
+    })
+
+    pera.connector.on('disconnect',(error, payload) => {
+      if (error) {
+        throw new Error('Failed to connect with the Pera Wallet')
+      }
+      resolve([] as Array<string>)
     })
   })
 }
