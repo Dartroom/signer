@@ -137,37 +137,37 @@ export class Wallet {
   }
 
   // Wallet Connect implementation
-  private setPera () {
-    if (typeof window.global !== "undefined") {
-      // Pollyfill for Buffer
-      // @ts-ignore
-      window.global = window
+  // private setPera () {
+  //   if (typeof window.global !== "undefined") {
+  //     // Pollyfill for Buffer
+  //     // @ts-ignore
+  //     window.global = window
 
-      const { Buffer } = buffer
+  //     const { Buffer } = buffer
 
-      // @ts-ignore
-      if (!window.Buffer) window.Buffer = Buffer
-    } else {
-      const { Buffer } = buffer
+  //     // @ts-ignore
+  //     if (!window.Buffer) window.Buffer = Buffer
+  //   } else {
+  //     const { Buffer } = buffer
 
-      // @ts-ignore
-      if (!window.Buffer) window.Buffer = Buffer
-    }
+  //     // @ts-ignore
+  //     if (!window.Buffer) window.Buffer = Buffer
+  //   }
 
-    // const connector = new WalletConnect({
-    //   bridge: "https://bridge.walletconnect.org"
-    // })
+  //   // const connector = new WalletConnect({
+  //   //   bridge: "https://bridge.walletconnect.org"
+  //   // })
 
-    // if (connector.connected) {
-    //   return {
-    //     connector: connector,
-    //     uri: connector.uri,
-    //     deeplink: `algorand://` + connector.uri.split(':')[1]
-    //   }
-    // } else {
-    //   return {
-    //     connector: connector
-    //   }
-    // }
-  }
+  //   // if (connector.connected) {
+  //   //   return {
+  //   //     connector: connector,
+  //   //     uri: connector.uri,
+  //   //     deeplink: `algorand://` + connector.uri.split(':')[1]
+  //   //   }
+  //   // } else {
+  //   //   return {
+  //   //     connector: connector
+  //   //   }
+  //   // }
+  // }
 }
