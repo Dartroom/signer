@@ -24,10 +24,22 @@ export default async function signTxns (provider: Provider, txns: Array<Array<Tx
 
     let wallet: Wallets | null = null
 
-    for (let t = 0; t < txns[i].length; t++) {
+    const txnArray = txns[i]
 
-      if (!wallet && txns[i][t].signers.length > 0) {
-        const foundAddress = provider.addresses.find((a) => a.address === txns[i][t].signers[0])
+    if (!txnArray) {
+      throw new Error('Failed to parse transaction array.')
+    }
+
+    for (let t = 0; t < txnArray.length; t++) {
+
+      const txn = txnArray[t]
+
+      if (!txn) {
+        throw new Error('Failed to parse transaction array.')
+      }
+
+      if (!wallet && txn.signers.length > 0) {
+        const foundAddress = provider.addresses.find((a) => a.address === txn.signers[0])
 
         if (foundAddress) {
           wallet = foundAddress.wallet
@@ -37,16 +49,16 @@ export default async function signTxns (provider: Provider, txns: Array<Array<Tx
 
     switch (wallet) {
       case Wallets.MYALGO:
-        myAlgoTxns.push(txns[i])
+        myAlgoTxns.push(txnArray)
         break
       case Wallets.PERA:
-        peraTxns.push(txns[i])
+        peraTxns.push(txnArray)
         break
       case Wallets.ALGOSIGNER:
-        algoSignerTxns.push(txns[i])
+        algoSignerTxns.push(txnArray)
         break
       case Wallets.EXODUS:
-        exodusTxns.push(txns[i])
+        exodusTxns.push(txnArray)
         break
     }
   }

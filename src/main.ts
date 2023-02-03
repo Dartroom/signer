@@ -62,8 +62,7 @@ export class Wallet {
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
     this.pera = new PeraWalletConnect({ 
-      shouldShowSignTxnToast: false, 
-      network: options?.ledger === Ledgers.MAINNET ? 'mainnet' : 'testnet' 
+      shouldShowSignTxnToast: false
     })
     this.algoSigner = this.setAlgoSigner()
     this.exodus = this.setExodus()

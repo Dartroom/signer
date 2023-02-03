@@ -11,18 +11,31 @@ export default async function sign ({ algoSigner }: Provider, txns: Array<Array<
   const unsignedTxns: Array<Txn> = []
 
   for (let g = 0; g < txns.length; g++) {
-    for (let t = 0; t < txns[g].length; t++) {
-      
-      unsignedTxns.push(txns[g][t])
 
-      if (txns[g][t].signers.length > 1) {
+    const txnArray = txns[g]
+
+    if (!txnArray) {
+      throw new Error('Failed to parse transaction array.')
+    }
+
+    for (let t = 0; t < txnArray.length; t++) {
+
+      const txn = txnArray[t]
+
+      if (!txn) {
+        throw new Error('Failed to parse transaction array.')
+      }
+      
+      unsignedTxns.push(txn)
+
+      if (txn.signers.length > 1) {
         binaryTxns.push({
-          txn: algoSigner.encoding.msgpackToBase64(txns[g][t].blob),
-          signers: txns[g][t].signers
+          txn: algoSigner.encoding.msgpackToBase64(txn.blob),
+          signers: txn.signers
         })
       } else {
         binaryTxns.push({
-          txn: algoSigner.encoding.msgpackToBase64(txns[g][t].blob)
+          txn: algoSigner.encoding.msgpackToBase64(txn.blob)
         })
       }
     }
@@ -32,10 +45,17 @@ export default async function sign ({ algoSigner }: Provider, txns: Array<Array<
 
   if (signedTxns.length > 0) {
     return signedTxns.map((txn, i) => {
+
+      const unsignedTxn = unsignedTxns[i]
+
+      if (!unsignedTxn) {
+        throw new Error('Failed to parse transaction array.')
+      }
+
       return {
         blob: Uint8Array.from(atob(txn.blob), c => c.charCodeAt(0)),
-        txID: unsignedTxns[i].txID,
-        signers: unsignedTxns[i].signers
+        txID: unsignedTxn.txID,
+        signers: unsignedTxn.signers
       }
     })
   } else {
