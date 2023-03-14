@@ -1,14 +1,20 @@
 import { Provider } from '../main'
 import { Txn } from '../signTransactions'
 
-export default async function sign ({ algoSigner }: Provider, txns: Array<Array<Txn>>): Promise<Array<Txn>> {
+interface AlgoSignerTxn {
+  txn: string,
+  signers?: Array<string>
+  authAddr?: string
+}
 
-  if (!algoSigner) {
+export default async function sign<T extends Txn>({ algoSigner }: Provider, txns: Array<Array<T>>): Promise<Array<Array<T>>> {
+
+  if (!algoSigner?.algorand) {
     throw new Error('Failed to connect with the AlgoSigner. Make sure the browser extension is installed.')
   }
 
-  const binaryTxns: Array<{ txn: string, signers?: Array<string> }> = []
-  const unsignedTxns: Array<Txn> = []
+  const unsignedTxns: Array<T> = []
+  let formatedTxns: Array<Array<{ txn: string, signers?: Array<string> }>> = []
 
   for (let g = 0; g < txns.length; g++) {
 
@@ -27,38 +33,54 @@ export default async function sign ({ algoSigner }: Provider, txns: Array<Array<
       }
       
       unsignedTxns.push(txn)
-
-      if (txn.signers.length > 1) {
-        binaryTxns.push({
-          txn: algoSigner.encoding.msgpackToBase64(txn.blob),
-          signers: txn.signers
-        })
-      } else {
-        binaryTxns.push({
-          txn: algoSigner.encoding.msgpackToBase64(txn.blob)
-        })
-      }
     }
   }
 
-  const signedTxns = await algoSigner.signTxn(binaryTxns) as unknown as Array<{ blob: string, txID: string }>
+  formatedTxns = txns.map((txnGroup) => {
+    return txnGroup.map((txn) => {
+      const format = {
+        txn: algoSigner.algorand.encoding.msgpackToBase64(txn.blob),
+      } as AlgoSignerTxn
 
-  if (signedTxns.length > 0) {
-    return signedTxns.map((txn, i) => {
+      if (txn.authAddress) {
+        format['authAddr'] = txn.authAddress
+      } else if (txn.signers) {
+        format['signers'] = txn.signers
+      }
 
-      const unsignedTxn = unsignedTxns[i]
+      return format
+    })
+  })
 
-      if (!unsignedTxn) {
+  let formated: Array<Array<T>> = []
+
+  const signedTxns = await algoSigner.algorand.signTxns(formatedTxns) as unknown as Array<string>
+
+  if (signedTxns && signedTxns.length > 0) {
+    formated = txns.map((txnArray, i) => {
+      const unsignedArray = txns[i]
+      const signedArray = signedTxns.splice(0, txnArray.length)
+
+      if (!unsignedArray) {
         throw new Error('Failed to parse transaction array.')
       }
 
-      return {
-        blob: Uint8Array.from(atob(txn.blob), c => c.charCodeAt(0)),
-        txID: unsignedTxn.txID,
-        signers: unsignedTxn.signers
-      }
+      return signedArray.map((signedTxn, index) => {
+        const usignedTxn = unsignedArray[index]
+
+        if (!usignedTxn) {
+          throw new Error('Failed to parse transaction array.')
+        }
+
+        return {
+          ...usignedTxn,
+          blob: Uint8Array.from(algoSigner.algorand.encoding.base64ToMsgpack(signedTxn))
+        }
+      })
     })
   } else {
     throw new Error('')
   }
+
+  return formated
 }

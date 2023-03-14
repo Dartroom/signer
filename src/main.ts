@@ -4,16 +4,14 @@ import buffer from 'buffer'
 import { PeraWalletConnect } from "@perawallet/connect"
 
 import { Wrapper } from "./types/algoSigner"
+import AlgoWrapper from "./types/algoSignerAlgo"
 
 import connect, { ConnectSettings } from './connect'
 import disconnect, { DisconnectSettings } from './disconnect'
 import signTransaction, { type Txn } from './signTransactions'
 import setActive, { ActiveSettings } from './active'
 
-export enum Ledgers {
-  MAINNET = 'MainNet',
-  TESTNET = 'TestNet'
-}
+export type Ledgers = 'MAINNET' | 'TESTNET'
 
 export enum Wallets {
   MYALGO = 'MyAlgo',
@@ -39,7 +37,7 @@ export interface Pera {
 export interface Provider {
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect
-  algoSigner: Wrapper | undefined
+  algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
   addresses: Addresses
@@ -47,13 +45,14 @@ export interface Provider {
 }
 
 declare var AlgoSigner: any;
+declare var algorand: any;
 declare var exodus: any;
 
 export class Wallet {
 
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect;
-  algoSigner: Wrapper | undefined
+  algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
   addresses: Addresses
@@ -62,11 +61,12 @@ export class Wallet {
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
     this.pera = new PeraWalletConnect({ 
-      shouldShowSignTxnToast: false
+      shouldShowSignTxnToast: false,
+      chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
     })
     this.algoSigner = this.setAlgoSigner()
     this.exodus = this.setExodus()
-    this.ledger = options?.ledger || Ledgers.MAINNET
+    this.ledger = options?.ledger || 'MAINNET'
     this.addresses = this.getLocalAccounts()
     this.active = this.getActive()
   }
@@ -80,7 +80,7 @@ export class Wallet {
     await disconnect(this, settings)
   }
 
-  async signTransactions (txns: Array<Array<Txn>>) {
+  async signTransactions<T extends Txn>(txns: Array<Array<T>>): Promise<Array<Array<T>>> {
     return await signTransaction(this, txns)
   }
 
@@ -117,7 +117,11 @@ export class Wallet {
   private setAlgoSigner () {
     try {
       const algoSigner = AlgoSigner
-      return algoSigner
+      const algo = algorand
+      return {
+        algoSigner: algoSigner,
+        algorand: algo
+      }
     } catch {
       return undefined
     }

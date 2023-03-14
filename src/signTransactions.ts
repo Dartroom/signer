@@ -9,16 +9,20 @@ import signExodus from './exodus/signTransactions'
 export interface Txn {
   blob: Uint8Array
   signers: Array<string>
-  txID: string
+  txID?: string
+  description?: string
+  signature?: string
+  authAddress?: string
 }
 
+export type TxnArray = Array<Array<Txn>>
 
-export default async function signTxns (provider: Provider, txns: Array<Array<Txn>>): Promise<Array<Txn>> {
+export default async function signTxns<T extends Txn>(provider: Provider, txns: Array<Array<T>>): Promise<Array<Array<T>>> {
 
-  let myAlgoTxns: Array<Array<Txn>> = []
-  let peraTxns: Array<Array<Txn>> = []
-  let algoSignerTxns: Array<Array<Txn>> = []
-  let exodusTxns: Array<Array<Txn>> = []
+  let myAlgoTxns: Array<Array<T>> = []
+  let peraTxns: Array<Array<T>> = []
+  let algoSignerTxns: Array<Array<T>> = []
+  let exodusTxns: Array<Array<T>> = []
 
   for (let i = 0; i < txns.length; i++) {
 
@@ -38,8 +42,14 @@ export default async function signTxns (provider: Provider, txns: Array<Array<Tx
         throw new Error('Failed to parse transaction array.')
       }
 
-      if (!wallet && txn.signers.length > 0) {
-        const foundAddress = provider.addresses.find((a) => a.address === txn.signers[0])
+      if (!wallet && txn.signers && txn.signers.length > 0) {
+        const signers = txn.signers
+
+        if (!signers) {
+          return []
+        }
+
+        const foundAddress = provider.addresses.find((a) => a.address === signers[0])
 
         if (foundAddress) {
           wallet = foundAddress.wallet
@@ -63,7 +73,7 @@ export default async function signTxns (provider: Provider, txns: Array<Array<Tx
     }
   }
 
-  const signedTxns: Array<Txn> = []
+  const signedTxns: Array<Array<T>> = []
 
   if (myAlgoTxns.length > 0) {
     const signedMyAlgo = await signMyAlgo(provider, myAlgoTxns)
@@ -77,7 +87,7 @@ export default async function signTxns (provider: Provider, txns: Array<Array<Tx
 
   if (algoSignerTxns.length > 0) {
     const signedAlgoSigner = await signAlgoSigner(provider, algoSignerTxns)
-    signedTxns.push(...signedAlgoSigner as unknown as Array<Txn>)
+    signedTxns.push(...signedAlgoSigner)
   }
 
   if (exodusTxns.length > 0) {
