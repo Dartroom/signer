@@ -1,10 +1,10 @@
 import { Provider } from '../main'
-import { Txn } from '../signTransactions'
+import { Txn, TxnArray } from '../signTransactions'
 import { decodeUnsignedTransaction, Transaction } from 'algosdk'
 
-export default async function sign ({ pera }: Provider, txns: Array<Array<Txn>>): Promise<Array<Txn>> {
+export default async function sign<T extends Txn>({ pera }: Provider, txns: Array<Array<T>>): Promise<Array<Array<T>>> {
 
-  const unsignedTxns: Array<Txn> = []
+  const unsignedTxns: Array<T> = []
   let formatedTxns: Array<Array<{ txn: Transaction, signers?: Array<string> }>> = []
 
   for (let g = 0; g < txns.length; g++) {
@@ -37,26 +37,37 @@ export default async function sign ({ pera }: Provider, txns: Array<Array<Txn>>)
   })
 
   let signedTxns: Array<Uint8Array> = []
+  let formated: Array<Array<T>> = []
 
   await pera.reconnectSession()
   signedTxns = await pera.signTransaction(formatedTxns)
 
-  if (signedTxns.length > 0) {
-    return signedTxns.map((txn, i) => {
+  if (signedTxns && signedTxns.length > 0) {
+    formated = txns.map((txnArray, i) => {
+      const unsignedArray = txns[i]
+      const signedArray = signedTxns.splice(0, txnArray.length)
 
-      const unsignedTxn = unsignedTxns[i]
-
-      if (!unsignedTxn) {
+      if (!unsignedArray) {
         throw new Error('Failed to parse transaction array.')
       }
 
-      return {
-        blob: txn,
-        txID: unsignedTxn.txID,
-        signers: unsignedTxn.signers
-      }
+      return signedArray.map((signedTxn, index) => {
+        const usignedTxn = unsignedArray[index]
+
+        if (!usignedTxn) {
+          throw new Error('Failed to parse transaction array.')
+        }
+
+        return {
+          ...usignedTxn,
+          blob: signedTxn
+        }
+      })
     })
+
   } else {
-    throw new Error('')
+    throw new Error('The Pera wallet did not return any transactions.')
   }
+
+  return formated
 }

@@ -2,10 +2,10 @@ import { Provider } from '../main'
 import { Txn } from '../signTransactions'
 import { decodeUnsignedTransaction } from 'algosdk'
 
-export default async function sign ({ exodus }: Provider, txns: Array<Array<Txn>>): Promise<Array<Txn>> {
+export default async function sign<T extends Txn>({ exodus }: Provider, txns: Array<Array<T>>): Promise<Array<Array<T>>> {
 
   const binaryTxns: Array<Uint8Array> = []
-  const unsignedTxns: Array<Txn> = []
+  const unsignedTxns: Array<T> = []
 
   for (let g = 0; g < txns.length; g++) {
 
@@ -28,20 +28,37 @@ export default async function sign ({ exodus }: Provider, txns: Array<Array<Txn>
     }
   }
 
+  let formated: Array<Array<T>> = []
+
   const signedTxns = await exodus.signTransaction(binaryTxns) as Array<Uint8Array>
 
-  return signedTxns.map((blob, i) => {
+  if (signedTxns && signedTxns.length > 0) {
 
-    const unsignedTxn = unsignedTxns[i]
+  formated = txns.map((txnArray, i) => {
+    const unsignedArray = txns[i]
+    const signedArray = signedTxns.splice(0, txnArray.length)
 
-    if (!unsignedTxn) {
+    if (!unsignedArray) {
       throw new Error('Failed to parse transaction array.')
     }
 
-    return {
-      blob: blob,
-      signers: unsignedTxn.signers,
-      txID: unsignedTxn.txID
-    }
+    return signedArray.map((signedTxn, index) => {
+      const usignedTxn = unsignedArray[index]
+
+      if (!usignedTxn) {
+        throw new Error('Failed to parse transaction array.')
+      }
+
+      return {
+        ...usignedTxn,
+        blob: signedTxn
+      }
+    })
   })
+
+  } else {
+    throw new Error('The Exodus wallet did not return any transcactions.')
+  }
+
+  return formated
 }
