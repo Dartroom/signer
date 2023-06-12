@@ -1,7 +1,7 @@
-import { Provider, Wallets } from '../main'
+import { Provider, Wallets, Address } from '../main'
 import MyAlgoConnect from '@randlabs/myalgo-connect'
 
-export default async function connect ({ }: Provider) {
+export default async function connect ({ }: Provider): Promise<Array<Address>> {
   const myAlgo = new MyAlgoConnect()
 
   const accounts = await myAlgo.connect({
@@ -13,7 +13,7 @@ export default async function connect ({ }: Provider) {
     return accounts.map((a) => {
       return {
         address: a.address,
-        wallet: Wallets.MYALGO
+        wallet: "MyAlgo"
       }
     })
   } else {

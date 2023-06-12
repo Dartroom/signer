@@ -42,7 +42,7 @@ export default async function sign<T extends Txn>({ algoSigner }: Provider, txns
         txn: algoSigner.algorand.encoding.msgpackToBase64(txn.blob),
       } as AlgoSignerTxn
 
-      if (txn.authAddress) {
+      if (txn.authAddress && txn.signers.length !== 0) {
         format['authAddr'] = txn.authAddress
       } else if (txn.signers) {
         format['signers'] = txn.signers
@@ -53,8 +53,17 @@ export default async function sign<T extends Txn>({ algoSigner }: Provider, txns
   })
 
   let formated: Array<Array<T>> = []
+  let signedTxns: Array<string | null>
 
-  const signedTxns = await algoSigner.algorand.signTxns(formatedTxns) as unknown as Array<string>
+  try {
+    signedTxns = await algoSigner.algorand.signTxns(formatedTxns) as unknown as Array<string>
+  } catch (e: any) {
+    if (e.data) {
+      throw new Error(e.data)
+    } else {
+      throw new Error(e)
+    }
+  }
 
   if (signedTxns && signedTxns.length > 0) {
     formated = txns.map((txnArray, i) => {
@@ -72,6 +81,10 @@ export default async function sign<T extends Txn>({ algoSigner }: Provider, txns
           throw new Error('Failed to parse transaction array.')
         }
 
+        if (!signedTxn) {
+          return usignedTxn
+        }
+
         return {
           ...usignedTxn,
           blob: Uint8Array.from(algoSigner.algorand.encoding.base64ToMsgpack(signedTxn))
@@ -79,7 +92,7 @@ export default async function sign<T extends Txn>({ algoSigner }: Provider, txns
       })
     })
   } else {
-    throw new Error('')
+    throw new Error('Failed to parse transaction array.')
   }
 
   return formated

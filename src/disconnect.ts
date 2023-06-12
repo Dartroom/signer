@@ -18,20 +18,20 @@ function clearWallet(p: Provider, w: Wallets, address?: string) {
 export default async function disconnect (provider: Provider, { wallet, address }: DisconnectSettings) {
 
   switch (wallet) {
-    case Wallets.MYALGO:
-      clearWallet(provider, Wallets.MYALGO, address)
+    case "MyAlgo":
+      clearWallet(provider, "MyAlgo", address)
       break
-    case Wallets.PERA:
+    case "PeraWallet":
       await disconnectPera(provider)
-      clearWallet(provider, Wallets.PERA)
+      clearWallet(provider, "PeraWallet")
       break
-    case Wallets.ALGOSIGNER:
-      clearWallet(provider, Wallets.ALGOSIGNER, address)
+    case "AlgoSigner":
+      clearWallet(provider, "AlgoSigner", address)
       break
-    case Wallets.EXODUS:
-      await disconnectExodus(provider)
-      clearWallet(provider, Wallets.EXODUS)
-      break
+    // case Wallets.EXODUS:
+    //   await disconnectExodus(provider)
+    //   clearWallet(provider, Wallets.EXODUS)
+    //   break
   }
 
   if (provider.active && address) {

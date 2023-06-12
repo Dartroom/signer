@@ -5,6 +5,7 @@ import { decodeUnsignedTransaction, Transaction } from 'algosdk'
 export default async function sign<T extends Txn>({ pera }: Provider, txns: Array<Array<T>>): Promise<Array<Array<T>>> {
 
   const unsignedTxns: Array<T> = []
+  let logicTxns: Array<Array<boolean>> = []
   let formatedTxns: Array<Array<{ txn: Transaction, signers?: Array<string> }>> = []
 
   for (let g = 0; g < txns.length; g++) {
@@ -36,6 +37,10 @@ export default async function sign<T extends Txn>({ pera }: Provider, txns: Arra
     })
   })
 
+  logicTxns = txns.map((txnGroup) => {
+    return txnGroup.map((txn) => txn.signers.length === 0)
+  })
+
   let signedTxns: Array<Uint8Array> = []
   let formated: Array<Array<T>> = []
 
@@ -45,7 +50,19 @@ export default async function sign<T extends Txn>({ pera }: Provider, txns: Arra
   if (signedTxns && signedTxns.length > 0) {
     formated = txns.map((txnArray, i) => {
       const unsignedArray = txns[i]
-      const signedArray = signedTxns.splice(0, txnArray.length)
+      const logicsigs = logicTxns[i]
+
+      if (!logicsigs) {
+        throw new Error('Failed to check for logic sigs.')
+      }
+
+      const signedArray = logicsigs.map((logic) => {
+        if (logic) {
+          return null
+        } else {
+          return signedTxns.splice(0, 1)[0]
+        }
+      })
 
       if (!unsignedArray) {
         throw new Error('Failed to parse transaction array.')
@@ -56,6 +73,10 @@ export default async function sign<T extends Txn>({ pera }: Provider, txns: Arra
 
         if (!usignedTxn) {
           throw new Error('Failed to parse transaction array.')
+        }
+
+        if (!signedTxn) {
+          return usignedTxn
         }
 
         return {
