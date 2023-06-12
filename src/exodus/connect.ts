@@ -1,4 +1,4 @@
-import { Provider, Wallets } from '../main'
+import { Provider, Address } from '../main'
 
 export default async function connect ({ exodus }: Provider) {
 
@@ -27,7 +27,7 @@ export default async function connect ({ exodus }: Provider) {
   if (accounts) {
     return [{
       address: accounts[0],
-      wallet: Wallets.EXODUS
+      wallet: "Exodus"
     }]
   } else {
     throw new Error('Either the user shared no accounts, or Exodus did not return any.')

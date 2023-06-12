@@ -1,4 +1,4 @@
-import { Provider, Wallets, Pera } from '../main'
+import { Provider, Wallets, Address } from '../main'
 
 // async function awaitConnect (pera: Pera): Promise<Array<string>> {
 //   return new Promise((resolve) => {
@@ -32,7 +32,7 @@ function clearWallet(addresses: Provider['addresses'], w: Wallets, address?: str
 }
 
 
-export default async function connect ({ pera, addresses }: Provider) {
+export default async function connect ({ pera, addresses }: Provider): Promise<Array<Address>> {
 
   // handeld by disconnect event
   // if (pera.isConnected) {
@@ -76,14 +76,14 @@ export default async function connect ({ pera, addresses }: Provider) {
   // accounts = await awaitConnect(pera)
 
   pera.connector?.on('disconnect', () => {
-    clearWallet(addresses, Wallets.PERA)
+    clearWallet(addresses, "PeraWallet")
   })
 
   if (accounts && accounts.length > 0) {
     return accounts.map((address) => {
       return {
         address: address,
-        wallet: Wallets.PERA
+        wallet: "PeraWallet"
       }
     })
   } else {

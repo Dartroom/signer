@@ -13,12 +13,9 @@ import setActive, { ActiveSettings } from './active'
 
 export type Ledgers = 'MAINNET' | 'TESTNET'
 
-export enum Wallets {
-  MYALGO = 'MyAlgo',
-  PERA = 'PeraWallet',
-  ALGOSIGNER = 'AlgoSigner',
-  EXODUS = 'Exodus'
-}
+export const WalletList = ["MyAlgo", "PeraWallet", "AlgoSigner"] as const
+
+export type Wallets = typeof WalletList[number]
 
 export interface Address {
   address: string
@@ -65,7 +62,7 @@ export class Wallet {
       chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
     })
     this.algoSigner = this.setAlgoSigner()
-    this.exodus = this.setExodus()
+    // this.exodus = this.setExodus()
     this.ledger = options?.ledger || 'MAINNET'
     this.addresses = this.getLocalAccounts()
     this.active = this.getActive()
@@ -127,17 +124,17 @@ export class Wallet {
     }
   }
 
-  private setExodus () {
-    try {
-      const exodusSigner = exodus.algorand
+  // private setExodus () {
+  //   try {
+  //     const exodusSigner = exodus.algorand
 
-      exodusSigner.on('disconnect', this.disconnectAddress({ wallet: Wallets.EXODUS }))
+  //     exodusSigner.on('disconnect', this.disconnectAddress({ wallet: Wallets.EXODUS }))
 
-      return exodusSigner
-    } catch {
-      return undefined
-    }
-  }
+  //     return exodusSigner
+  //   } catch {
+  //     return undefined
+  //   }
+  // }
 
   // Wallet Connect implementation
   // private setPera () {

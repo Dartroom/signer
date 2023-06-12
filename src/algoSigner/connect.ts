@@ -1,6 +1,6 @@
-import { Provider, Wallets } from '../main'
+import { Provider, Address } from '../main'
 
-export default async function connect ({ algoSigner, ledger }: Provider) {
+export default async function connect ({ algoSigner, ledger }: Provider): Promise<Array<Address>> {
 
   if (!algoSigner) {
     throw new Error('Failed to connect with the AlgoSigner. Make sure the browser extension is installed.')
@@ -27,7 +27,7 @@ export default async function connect ({ algoSigner, ledger }: Provider) {
     return accounts.map((a) => {
       return {
         address: a,
-        wallet: Wallets.ALGOSIGNER
+        wallet: "AlgoSigner"
       }
     })
   } else {

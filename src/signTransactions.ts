@@ -58,18 +58,18 @@ export default async function signTxns<T extends Txn>(provider: Provider, txns: 
     }
 
     switch (wallet) {
-      case Wallets.MYALGO:
+      case "MyAlgo":
         myAlgoTxns.push(txnArray)
         break
-      case Wallets.PERA:
+      case "PeraWallet":
         peraTxns.push(txnArray)
         break
-      case Wallets.ALGOSIGNER:
+      case "AlgoSigner":
         algoSignerTxns.push(txnArray)
         break
-      case Wallets.EXODUS:
-        exodusTxns.push(txnArray)
-        break
+      // case Wallets.EXODUS:
+      //   exodusTxns.push(txnArray)
+      //   break
     }
   }
 
