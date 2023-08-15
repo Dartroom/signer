@@ -1,6 +1,6 @@
 {
   "name": "@dartroom/signer",
-  "version": "0.3.3-alpha",
+  "version": "0.3.4-alpha",
   "description": "A package that aggregates multiple Algorand signing options into one interface. Handles signing and address/login management.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
