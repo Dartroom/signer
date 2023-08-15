@@ -1,7 +1,9 @@
+# signer
 [![CI](https://github.com/Dartroom/signer/actions/workflows/main.yml/badge.svg)](https://github.com/Dartroom/signer/actions/workflows/main.yml)
 [![Publish](https://github.com/Dartroom/signer/actions/workflows/publish.yml/badge.svg)](https://github.com/Dartroom/signer/actions/workflows/publish.yml)
 [![npm version](https://badge.fury.io/js/@dartroom%2Fsigner.svg)](https://badge.fury.io/js/@dartroom%2Fsigner)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A package that aggregates multiple Algorand signing options into one interface. Handles signing and address/login management.
 
 Integrates the following wallet apps:
