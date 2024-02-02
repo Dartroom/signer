@@ -2,6 +2,7 @@ A package that aggregates multiple Algorand signing options into one interface. 
 
 Integrates the following wallet apps:
 - [AlgoSigner](https://github.com/PureStake/algosigner)
+- [DeflyWallet](https://github.com/blockshake-io/defly-connect)
 - [MyAlgo](https://github.com/randlabs/myalgo-connect)
 - [PeraWallet](https://github.com/perawallet/connect)
 
