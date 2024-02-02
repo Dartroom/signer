@@ -3,6 +3,8 @@ import { Provider, Wallets, Addresses } from './main'
 import connectMyAlgo from './myAlgo/connect'
 import connectAlgoSigner from './algoSigner/connect'
 import connectPera from './pera/connect'
+import connectDefly from './defly/connect'
+
 
 export interface ConnectSettings {
   wallet: Wallets
@@ -24,6 +26,10 @@ export default async function connect (provider: Provider, { wallet }: ConnectSe
     case "PeraWallet":
       newAddresses = await connectPera(provider)
       clearWallet(provider, "PeraWallet")
+      break
+    case "DeflyWallet":
+      newAddresses = await connectDefly(provider)
+      clearWallet(provider, "DeflyWallet")
       break
     case "AlgoSigner":
       newAddresses = await connectAlgoSigner(provider)

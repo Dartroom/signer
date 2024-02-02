@@ -1,5 +1,6 @@
 import { Provider, Wallets } from './main'
 import disconnectPera from './pera/disconnect'
+import disconnectDefly from './defly/disconnect'
 import disconnectExodus from './exodus/disconnect'
 
 export interface DisconnectSettings {
@@ -24,6 +25,10 @@ export default async function disconnect (provider: Provider, { wallet, address 
     case "PeraWallet":
       await disconnectPera(provider)
       clearWallet(provider, "PeraWallet")
+      break
+    case "DeflyWallet":
+      await disconnectDefly(provider)
+      clearWallet(provider, "DeflyWallet")
       break
     case "AlgoSigner":
       clearWallet(provider, "AlgoSigner", address)

@@ -1,6 +1,6 @@
 {
   "name": "@dartroom/signer",
-  "version": "0.3.3-alpha",
+  "version": "0.3.5-alpha",
   "description": "A package that aggregates multiple Algorand signing options into one interface. Handles signing and address/login management.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -31,6 +31,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
+    "@blockshake/defly-connect": "^1.1.6",
     "@perawallet/connect": "^1.2.1",
     "@randlabs/myalgo-connect": "^1.4.0",
     "algosdk": "^2.1.0",
