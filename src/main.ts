@@ -2,6 +2,8 @@ import MyAlgoConnect from '@randlabs/myalgo-connect'
 // import WalletConnect from "@walletconnect/client"
 import buffer from 'buffer'
 import { PeraWalletConnect } from "@perawallet/connect"
+import { DeflyWalletConnect } from "@blockshake/defly-connect"
+
 
 import { Wrapper } from "./types/algoSigner"
 import AlgoWrapper from "./types/algoSignerAlgo"
@@ -13,7 +15,7 @@ import setActive, { ActiveSettings } from './active'
 
 export type Ledgers = 'MAINNET' | 'TESTNET'
 
-export const WalletList = ["MyAlgo", "PeraWallet", "AlgoSigner"] as const
+export const WalletList = ["MyAlgo", "PeraWallet", "AlgoSigner", "DeflyWallet"] as const
 
 export type Wallets = typeof WalletList[number]
 
@@ -31,9 +33,16 @@ export interface Pera {
   deeplink?: string
 }
 
+export interface Defly {
+  // connector: WalletConnect
+  uri?: string
+  deeplink?: string
+}
+
 export interface Provider {
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect
+  defly: DeflyWalletConnect
   algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -49,6 +58,7 @@ export class Wallet {
 
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect;
+  defly: DeflyWalletConnect;
   algoSigner: { algoSigner: Wrapper, algorand: AlgoWrapper } | undefined
   exodus: any | undefined
   ledger: Ledgers
@@ -58,6 +68,10 @@ export class Wallet {
   constructor (options?: { ledger?: Ledgers}) {
     this.myAlgo = new MyAlgoConnect()
     this.pera = new PeraWalletConnect({ 
+      shouldShowSignTxnToast: false,
+      chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
+    })
+    this.defly = new DeflyWalletConnect({ 
       shouldShowSignTxnToast: false,
       chainId: options?.ledger ? (options.ledger === 'TESTNET' ? 416002 : 416001) : 416001
     })
@@ -124,50 +138,4 @@ export class Wallet {
     }
   }
 
-  // private setExodus () {
-  //   try {
-  //     const exodusSigner = exodus.algorand
-
-  //     exodusSigner.on('disconnect', this.disconnectAddress({ wallet: Wallets.EXODUS }))
-
-  //     return exodusSigner
-  //   } catch {
-  //     return undefined
-  //   }
-  // }
-
-  // Wallet Connect implementation
-  // private setPera () {
-  //   if (typeof window.global !== "undefined") {
-  //     // Pollyfill for Buffer
-  //     // @ts-ignore
-  //     window.global = window
-
-  //     const { Buffer } = buffer
-
-  //     // @ts-ignore
-  //     if (!window.Buffer) window.Buffer = Buffer
-  //   } else {
-  //     const { Buffer } = buffer
-
-  //     // @ts-ignore
-  //     if (!window.Buffer) window.Buffer = Buffer
-  //   }
-
-  //   // const connector = new WalletConnect({
-  //   //   bridge: "https://bridge.walletconnect.org"
-  //   // })
-
-  //   // if (connector.connected) {
-  //   //   return {
-  //   //     connector: connector,
-  //   //     uri: connector.uri,
-  //   //     deeplink: `algorand://` + connector.uri.split(':')[1]
-  //   //   }
-  //   // } else {
-  //   //   return {
-  //   //     connector: connector
-  //   //   }
-  //   // }
-  // }
 }

@@ -3,3 +3,4 @@
 .env
 .npmrc
 /algoSigner
+.vscode

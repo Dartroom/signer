@@ -3,6 +3,7 @@ import { Transaction } from 'algosdk'
 
 import signMyAlgo from './myAlgo/signTransactions'
 import signPera from './pera/signTransactions'
+import signDefly from './defly/signTransactions'
 import signAlgoSigner from './algoSigner/signTransactions'
 import signExodus from './exodus/signTransactions'
 
@@ -21,6 +22,7 @@ export default async function signTxns<T extends Txn>(provider: Provider, txns: 
 
   let myAlgoTxns: Array<Array<T>> = []
   let peraTxns: Array<Array<T>> = []
+  let deflyTxns: Array<Array<T>> = []
   let algoSignerTxns: Array<Array<T>> = []
   let exodusTxns: Array<Array<T>> = []
 
@@ -64,6 +66,9 @@ export default async function signTxns<T extends Txn>(provider: Provider, txns: 
       case "PeraWallet":
         peraTxns.push(txnArray)
         break
+      case "DeflyWallet":
+        deflyTxns.push(txnArray)
+        break
       case "AlgoSigner":
         algoSignerTxns.push(txnArray)
         break
@@ -83,6 +88,11 @@ export default async function signTxns<T extends Txn>(provider: Provider, txns: 
   if (peraTxns.length > 0) {
     const signedPera = await signPera(provider, peraTxns)
     signedTxns.push(...signedPera)
+  }
+
+  if (deflyTxns.length > 0) {
+    const signedDefly = await signDefly(provider, deflyTxns)
+    signedTxns.push(...signedDefly)
   }
 
   if (algoSignerTxns.length > 0) {
