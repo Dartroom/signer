@@ -33,6 +33,12 @@ export interface Pera {
   deeplink?: string
 }
 
+export interface Defly {
+  // connector: WalletConnect
+  uri?: string
+  deeplink?: string
+}
+
 export interface Provider {
   myAlgo: MyAlgoConnect
   pera: PeraWalletConnect
@@ -132,50 +138,4 @@ export class Wallet {
     }
   }
 
-  // private setExodus () {
-  //   try {
-  //     const exodusSigner = exodus.algorand
-
-  //     exodusSigner.on('disconnect', this.disconnectAddress({ wallet: Wallets.EXODUS }))
-
-  //     return exodusSigner
-  //   } catch {
-  //     return undefined
-  //   }
-  // }
-
-  // Wallet Connect implementation
-  // private setPera () {
-  //   if (typeof window.global !== "undefined") {
-  //     // Pollyfill for Buffer
-  //     // @ts-ignore
-  //     window.global = window
-
-  //     const { Buffer } = buffer
-
-  //     // @ts-ignore
-  //     if (!window.Buffer) window.Buffer = Buffer
-  //   } else {
-  //     const { Buffer } = buffer
-
-  //     // @ts-ignore
-  //     if (!window.Buffer) window.Buffer = Buffer
-  //   }
-
-  //   // const connector = new WalletConnect({
-  //   //   bridge: "https://bridge.walletconnect.org"
-  //   // })
-
-  //   // if (connector.connected) {
-  //   //   return {
-  //   //     connector: connector,
-  //   //     uri: connector.uri,
-  //   //     deeplink: `algorand://` + connector.uri.split(':')[1]
-  //   //   }
-  //   // } else {
-  //   //   return {
-  //   //     connector: connector
-  //   //   }
-  //   // }
-  // }
 }
